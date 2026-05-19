@@ -71,8 +71,14 @@
 
     .card-body{font-size:.9rem;line-height:1.65;color:#444;white-space:pre-wrap}
 
-    .teacher-comment{margin-top:.8rem;padding:.8rem;background:#fff8f0;border-left:3px solid #e07b4f;border-radius:0 8px 8px 0;font-size:.85rem;line-height:1.6}
-    .teacher-comment strong{color:#c0584a;display:block;margin-bottom:.3rem;font-size:.78rem}
+    .teacher-comment{margin-top:.8rem;padding:.9rem 1rem;background:#fff5f5;border-left:3px solid #e74c3c;border-radius:0 8px 8px 0}
+    .teacher-comment strong{color:#c0392b;display:block;margin-bottom:.4rem;font-size:.78rem;font-weight:700}
+    .teacher-comment .cmt-text{color:#c0392b;font-size:.88rem;line-height:1.7;font-weight:500}
+
+    .lulu-stamp{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:60px;height:60px;flex-shrink:0;border:2.5px solid rgba(192,57,43,.72);border-radius:50%;transform:rotate(-18deg);background:radial-gradient(circle,rgba(255,240,240,.6) 0%,transparent 70%);box-shadow:inset 0 0 8px rgba(192,57,43,.1);position:relative;margin-top:.8rem}
+    .lulu-stamp::before{content:'';position:absolute;inset:3px;border:1.5px dashed rgba(192,57,43,.3);border-radius:50%}
+    .stamp-kanji{font-size:.95rem;font-weight:900;color:rgba(192,57,43,.82);letter-spacing:2px;line-height:1}
+    .stamp-sub{font-size:.42rem;color:rgba(192,57,43,.7);letter-spacing:1.5px;margin-top:2px;font-weight:700}
 
     .empty-state{text-align:center;padding:3rem 1rem;color:#bbb;font-size:.95rem}
     .empty-state span{font-size:2.5rem;display:block;margin-bottom:.6rem}
@@ -273,7 +279,11 @@ function renderWall() {
       ${p.teacherComment ? `
         <div class="teacher-comment">
           <strong>👩‍🏫 老師評語</strong>
-          ${esc(p.teacherComment)}
+          <div class="cmt-text">${esc(p.teacherComment)}</div>
+        </div>
+        <div class="lulu-stamp">
+          <div class="stamp-kanji">盧盧</div>
+          <div class="stamp-sub">已閱讀</div>
         </div>` : ''}
     </div>
   `).join('');
