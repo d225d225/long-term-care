@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>青銀共融心得分享 — 永平高中</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f5f0eb;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #e07b4f, #c0584a);
+      color: white;
+      padding: 2rem 1.5rem 1.5rem;
+      text-align: center;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: .4rem; }
+    header p  { font-size: .9rem; opacity: .88; }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,.2);
+      border-radius: 20px;
+      padding: .2rem .8rem;
+      font-size: .8rem;
+      margin-top: .6rem;
+    }
+
+    main { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+    /* ── form card ── */
+    .form-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+      margin-bottom: 2rem;
+    }
+    .form-card h2 {
+      font-size: 1rem;
+      color: #c0584a;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .row { display: flex; gap: .8rem; margin-bottom: .8rem; flex-wrap: wrap; }
+    .row input, .row select {
+      flex: 1;
+      min-width: 120px;
+      padding: .55rem .8rem;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .row input:focus, .row select:focus { border-color: #e07b4f; }
+
+    textarea {
+      width: 100%;
+      padding: .65rem .8rem;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: .9rem;
+      resize: vertical;
+      min-height: 120px;
+      outline: none;
+      transition: border-color .2s;
+      font-family: inherit;
+    }
+    textarea:focus { border-color: #e07b4f; }
+
+    .char-count {
+      text-align: right;
+      font-size: .75rem;
+      color: #aaa;
+      margin-top: .3rem;
+    }
+    .char-count.warn { color: #e07b4f; }
+
+    .submit-btn {
+      width: 100%;
+      padding: .75rem;
+      background: linear-gradient(135deg, #e07b4f, #c0584a);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: opacity .2s, transform .1s;
+    }
+    .submit-btn:hover  { opacity: .9; }
+    .submit-btn:active { transform: scale(.98); }
+    .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── toast ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: #333;
+      color: white;
+      padding: .7rem 1.4rem;
+      border-radius: 24px;
+      font-size: .9rem;
+      opacity: 0;
+      transition: all .35s ease;
+      z-index: 99;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── wall ── */
+    .wall-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .wall-header h2 { font-size: 1rem; color: #555; }
+    .filter-group { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .filter-btn {
+      padding: .3rem .8rem;
+      border-radius: 20px;
+      border: 1.5px solid #ddd;
+      background: white;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: #e07b4f;
+      border-color: #e07b4f;
+      color: white;
+    }
+
+    #wall { display: grid; gap: 1rem; }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      animation: fadeIn .4s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:none } }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: .6rem;
+    }
+    .card-name { font-weight: 700; font-size: .95rem; }
+    .card-meta { font-size: .75rem; color: #999; text-align: right; }
+
+    .group-tag {
+      display: inline-block;
+      font-size: .72rem;
+      padding: .15rem .6rem;
+      border-radius: 12px;
+      margin-bottom: .5rem;
+      font-weight: 600;
+    }
+    .tag-env  { background: #d4edda; color: #285a30; }
+    .tag-chat { background: #d0e8f7; color: #1a4f72; }
+
+    .card-body { font-size: .9rem; line-height: 1.65; color: #444; white-space: pre-wrap; }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #bbb;
+      font-size: .95rem;
+    }
+    .empty-state span { font-size: 2.5rem; display: block; margin-bottom: .6rem; }
+
+    .count-badge {
+      background: #f0e8e2;
+      color: #c0584a;
+      font-size: .78rem;
+      padding: .15rem .6rem;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>青銀共融「一日照服小幫手」</h1>
+  <p>115 年 6 月 10 日 ‧ 恆安住宿長照機構</p>
+  <div class="badge">永平高中 × 長照機構</div>
+</header>
+
+<main>
+
+  <!-- 投稿表單 -->
+  <div class="form-card">
+    <h2>✏️ 分享你的心得</h2>
+    <div class="row">
+      <input id="inp-name"  type="text"    placeholder="姓名（可用暱稱）" maxlength="20" />
+      <input id="inp-class" type="text"    placeholder="班級座號"         maxlength="10" />
+      <select id="inp-group">
+        <option value="">── 服務組別 ──</option>
+        <option value="env">環境組</option>
+        <option value="chat">聊天組</option>
+      </select>
+    </div>
+    <textarea id="inp-text" placeholder="寫下今天的感受、印象最深的事、對長照的新認識……（最多 500 字）" maxlength="500"></textarea>
+    <div class="char-count" id="char-count">0 / 500</div>
+    <button class="submit-btn" id="submit-btn" onclick="submitPost()">送出心得 🌿</button>
+  </div>
+
+  <!-- 心得牆 -->
+  <div class="wall-header">
+    <h2>💬 心得牆 <span class="count-badge" id="total-count">0 則</span></h2>
+    <div class="filter-group">
+      <button class="filter-btn active" onclick="setFilter('all',this)">全部</button>
+      <button class="filter-btn" onclick="setFilter('env',this)">環境組</button>
+      <button class="filter-btn" onclick="setFilter('chat',this)">聊天組</button>
+    </div>
+  </div>
+
+  <div id="wall"></div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const STORAGE_KEY = 'yp_ltc_posts_v1';
+  let currentFilter = 'all';
+
+  // ── 字數計算 ──
+  document.getElementById('inp-text').addEventListener('input', function() {
+    const n = this.value.length;
+    const el = document.getElementById('char-count');
+    el.textContent = n + ' / 500';
+    el.className = 'char-count' + (n >= 450 ? ' warn' : '');
+  });
+
+  // ── 讀取資料 ──
+  function loadPosts() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  // ── 儲存資料 ──
+  function savePosts(posts) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+  }
+
+  // ── 送出 ──
+  function submitPost() {
+    const name  = document.getElementById('inp-name').value.trim();
+    const cls   = document.getElementById('inp-class').value.trim();
+    const group = document.getElementById('inp-group').value;
+    const text  = document.getElementById('inp-text').value.trim();
+
+    if (!name)  { showToast('請填寫姓名或暱稱'); return; }
+    if (!group) { showToast('請選擇服務組別'); return; }
+    if (text.length < 10) { showToast('心得至少 10 個字喔！'); return; }
+
+    const post = {
+      id: Date.now(),
+      name, cls, group, text,
+      time: new Date().toLocaleString('zh-TW', { hour12: false })
+    };
+
+    const posts = loadPosts();
+    posts.unshift(post);
+    savePosts(posts);
+
+    // 清空
+    document.getElementById('inp-name').value  = '';
+    document.getElementById('inp-class').value = '';
+    document.getElementById('inp-group').value = '';
+    document.getElementById('inp-text').value  = '';
+    document.getElementById('char-count').textContent = '0 / 500';
+
+    renderWall();
+    showToast('心得已送出，謝謝你！🎉');
+  }
+
+  // ── 篩選 ──
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderWall();
+  }
+
+  // ── 渲染心得牆 ──
+  function renderWall() {
+    const all   = loadPosts();
+    const shown = currentFilter === 'all' ? all : all.filter(p => p.group === currentFilter);
+    const wall  = document.getElementById('wall');
+
+    document.getElementById('total-count').textContent = all.length + ' 則';
+
+    if (shown.length === 0) {
+      wall.innerHTML = `<div class="empty-state"><span>🌱</span>還沒有心得，成為第一位分享的同學吧！</div>`;
+      return;
+    }
+
+    wall.innerHTML = shown.map(p => `
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-name">${escHtml(p.name)}${p.cls ? ' ‧ ' + escHtml(p.cls) : ''}</div>
+          </div>
+          <div class="card-meta">${escHtml(p.time)}</div>
+        </div>
+        <span class="group-tag ${p.group === 'env' ? 'tag-env' : 'tag-chat'}">
+          ${p.group === 'env' ? '🌿 環境組' : '💬 聊天組'}
+        </span>
+        <div class="card-body">${escHtml(p.text)}</div>
+      </div>
+    `).join('');
+  }
+
+  // ── 工具 ──
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // 初始化
+  renderWall();
+</script>
+</body>
+</html>
