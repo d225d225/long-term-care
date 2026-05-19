@@ -7,7 +7,7 @@
 ## 心得分享網站
 
 **學生心得投稿請點此：**
-**[https://d225d225.github.io/long-term-care/%E5%BF%83%E5%BE%97%E5%88%86%E4%BA%AB%E7%B6%B2%E7%AB%99/](https://d225d225.github.io/long-term-care/%E5%BF%83%E5%BE%97%E5%88%86%E4%BA%AB%E7%B6%B2%E7%AB%99/)**
+**[https://d225d225.github.io/long-term-care/](https://d225d225.github.io/long-term-care/)**
 
 ---
 
