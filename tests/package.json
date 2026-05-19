@@ -1,0 +1,21 @@
+{
+  "name": "ltc-website-tests",
+  "version": "1.0.0",
+  "description": "青銀共融心得網站 — 完整測試套件",
+  "scripts": {
+    "test":         "jest --coverage",
+    "test:watch":   "jest --watch",
+    "test:verbose": "jest --verbose --coverage"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testMatch": ["**/__tests__/**/*.test.js"],
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["text", "html"],
+    "verbose": true
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}
