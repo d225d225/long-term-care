@@ -4,196 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>青銀共融心得分享 — 永平高中</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#f5f0eb;color:#333;min-height:100vh}
 
-    body {
-      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-      background: #f5f0eb;
-      color: #333;
-      min-height: 100vh;
-    }
+    header{background:linear-gradient(135deg,#e07b4f,#c0584a);color:#fff;padding:2rem 1.5rem 1.5rem;text-align:center}
+    header h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem}
+    header p{font-size:.9rem;opacity:.88}
+    .badge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:.2rem .8rem;font-size:.8rem;margin-top:.6rem}
 
-    header {
-      background: linear-gradient(135deg, #e07b4f, #c0584a);
-      color: white;
-      padding: 2rem 1.5rem 1.5rem;
-      text-align: center;
-    }
-    header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: .4rem; }
-    header p  { font-size: .9rem; opacity: .88; }
+    main{max-width:720px;margin:0 auto;padding:1.5rem 1rem 4rem}
 
-    .badge {
-      display: inline-block;
-      background: rgba(255,255,255,.2);
-      border-radius: 20px;
-      padding: .2rem .8rem;
-      font-size: .8rem;
-      margin-top: .6rem;
-    }
+    /* setup banner */
+    .setup-banner{background:#fff3cd;border:1.5px solid #ffc107;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.85rem;line-height:1.7}
+    .setup-banner strong{color:#856404}
+    .setup-banner code{background:#f8f1d8;padding:.1rem .4rem;border-radius:4px;font-size:.82rem}
+    .setup-banner.hidden{display:none}
 
-    main { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+    .form-card{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:2rem}
+    .form-card h2{font-size:1rem;color:#c0584a;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
 
-    /* ── form card ── */
-    .form-card {
-      background: white;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,.08);
-      margin-bottom: 2rem;
-    }
-    .form-card h2 {
-      font-size: 1rem;
-      color: #c0584a;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-    }
+    .row{display:flex;gap:.8rem;margin-bottom:.8rem;flex-wrap:wrap}
+    .row input,.row select{flex:1;min-width:120px;padding:.55rem .8rem;border:1.5px solid #ddd;border-radius:8px;font-size:.9rem;outline:none;transition:border-color .2s}
+    .row input:focus,.row select:focus{border-color:#e07b4f}
+    .row input.full{flex:100%}
 
-    .row { display: flex; gap: .8rem; margin-bottom: .8rem; flex-wrap: wrap; }
-    .row input, .row select {
-      flex: 1;
-      min-width: 120px;
-      padding: .55rem .8rem;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: .9rem;
-      outline: none;
-      transition: border-color .2s;
-    }
-    .row input:focus, .row select:focus { border-color: #e07b4f; }
+    .hint{font-size:.75rem;color:#999;margin-top:-.4rem;margin-bottom:.8rem;padding-left:.2rem}
 
-    textarea {
-      width: 100%;
-      padding: .65rem .8rem;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: .9rem;
-      resize: vertical;
-      min-height: 120px;
-      outline: none;
-      transition: border-color .2s;
-      font-family: inherit;
-    }
-    textarea:focus { border-color: #e07b4f; }
+    textarea{width:100%;padding:.65rem .8rem;border:1.5px solid #ddd;border-radius:8px;font-size:.9rem;resize:vertical;min-height:120px;outline:none;transition:border-color .2s;font-family:inherit}
+    textarea:focus{border-color:#e07b4f}
+    .char-count{text-align:right;font-size:.75rem;color:#aaa;margin-top:.3rem}
+    .char-count.warn{color:#e07b4f}
 
-    .char-count {
-      text-align: right;
-      font-size: .75rem;
-      color: #aaa;
-      margin-top: .3rem;
-    }
-    .char-count.warn { color: #e07b4f; }
+    .submit-btn{width:100%;padding:.75rem;background:linear-gradient(135deg,#e07b4f,#c0584a);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:1rem;transition:opacity .2s,transform .1s}
+    .submit-btn:hover{opacity:.9}
+    .submit-btn:active{transform:scale(.98)}
+    .submit-btn:disabled{opacity:.5;cursor:not-allowed}
 
-    .submit-btn {
-      width: 100%;
-      padding: .75rem;
-      background: linear-gradient(135deg, #e07b4f, #c0584a);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 1rem;
-      transition: opacity .2s, transform .1s;
-    }
-    .submit-btn:hover  { opacity: .9; }
-    .submit-btn:active { transform: scale(.98); }
-    .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .success-box{display:none;background:#d4edda;border:1.5px solid #4caf50;border-radius:12px;padding:1.2rem;text-align:center;margin-top:1rem}
+    .success-box.show{display:block}
+    .success-box p{font-size:.95rem;color:#285a30;line-height:1.7}
 
-    /* ── toast ── */
-    .toast {
-      position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(60px);
-      background: #333;
-      color: white;
-      padding: .7rem 1.4rem;
-      border-radius: 24px;
-      font-size: .9rem;
-      opacity: 0;
-      transition: all .35s ease;
-      z-index: 99;
-      pointer-events: none;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .wall-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.6rem}
+    .wall-header h2{font-size:1rem;color:#555}
+    .filter-group{display:flex;gap:.4rem;flex-wrap:wrap}
+    .filter-btn{padding:.3rem .8rem;border-radius:20px;border:1.5px solid #ddd;background:#fff;font-size:.8rem;cursor:pointer;transition:all .2s}
+    .filter-btn.active,.filter-btn:hover{background:#e07b4f;border-color:#e07b4f;color:#fff}
 
-    /* ── wall ── */
-    .wall-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .wall-header h2 { font-size: 1rem; color: #555; }
-    .filter-group { display: flex; gap: .4rem; flex-wrap: wrap; }
-    .filter-btn {
-      padding: .3rem .8rem;
-      border-radius: 20px;
-      border: 1.5px solid #ddd;
-      background: white;
-      font-size: .8rem;
-      cursor: pointer;
-      transition: all .2s;
-    }
-    .filter-btn.active, .filter-btn:hover {
-      background: #e07b4f;
-      border-color: #e07b4f;
-      color: white;
-    }
+    #wall{display:grid;gap:1rem}
 
-    #wall { display: grid; gap: 1rem; }
+    .card{background:#fff;border-radius:14px;padding:1.1rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.07);animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 1.1rem 1.2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,.07);
-      animation: fadeIn .4s ease;
-    }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:none } }
+    .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem}
+    .card-name{font-weight:700;font-size:.95rem}
+    .card-meta{font-size:.75rem;color:#999;text-align:right}
 
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: .6rem;
-    }
-    .card-name { font-weight: 700; font-size: .95rem; }
-    .card-meta { font-size: .75rem; color: #999; text-align: right; }
+    .group-tag{display:inline-block;font-size:.72rem;padding:.15rem .6rem;border-radius:12px;margin-bottom:.5rem;font-weight:600}
+    .tag-env{background:#d4edda;color:#285a30}
+    .tag-chat{background:#d0e8f7;color:#1a4f72}
 
-    .group-tag {
-      display: inline-block;
-      font-size: .72rem;
-      padding: .15rem .6rem;
-      border-radius: 12px;
-      margin-bottom: .5rem;
-      font-weight: 600;
-    }
-    .tag-env  { background: #d4edda; color: #285a30; }
-    .tag-chat { background: #d0e8f7; color: #1a4f72; }
+    .card-body{font-size:.9rem;line-height:1.65;color:#444;white-space:pre-wrap}
 
-    .card-body { font-size: .9rem; line-height: 1.65; color: #444; white-space: pre-wrap; }
+    .teacher-comment{margin-top:.8rem;padding:.8rem;background:#fff8f0;border-left:3px solid #e07b4f;border-radius:0 8px 8px 0;font-size:.85rem;line-height:1.6}
+    .teacher-comment strong{color:#c0584a;display:block;margin-bottom:.3rem;font-size:.78rem}
 
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: #bbb;
-      font-size: .95rem;
-    }
-    .empty-state span { font-size: 2.5rem; display: block; margin-bottom: .6rem; }
+    .empty-state{text-align:center;padding:3rem 1rem;color:#bbb;font-size:.95rem}
+    .empty-state span{font-size:2.5rem;display:block;margin-bottom:.6rem}
 
-    .count-badge {
-      background: #f0e8e2;
-      color: #c0584a;
-      font-size: .78rem;
-      padding: .15rem .6rem;
-      border-radius: 12px;
-      font-weight: 600;
-    }
+    .count-badge{background:#f0e8e2;color:#c0584a;font-size:.78rem;padding:.15rem .6rem;border-radius:12px;font-weight:600}
+
+    .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);background:#333;color:#fff;padding:.7rem 1.4rem;border-radius:24px;font-size:.9rem;opacity:0;transition:all .35s ease;z-index:99;pointer-events:none;white-space:nowrap}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    .loading{text-align:center;padding:2rem;color:#aaa;font-size:.9rem}
   </style>
 </head>
 <body>
@@ -206,20 +95,34 @@
 
 <main>
 
+  <!-- Firebase 未設定時顯示 -->
+  <div class="setup-banner" id="setup-banner">
+    ⚠️ <strong>系統尚未連接資料庫</strong>，請網站管理員填入 Firebase 設定（<code>index.html</code> 頂部 CONFIG 區域），心得才能跨裝置保存並通知老師。
+  </div>
+
   <!-- 投稿表單 -->
   <div class="form-card">
     <h2>✏️ 分享你的心得</h2>
     <div class="row">
       <input id="inp-name"  type="text"    placeholder="姓名（可用暱稱）" maxlength="20" />
       <input id="inp-class" type="text"    placeholder="班級座號"         maxlength="10" />
+    </div>
+    <div class="row">
       <select id="inp-group">
         <option value="">── 服務組別 ──</option>
-        <option value="env">環境組</option>
-        <option value="chat">聊天組</option>
+        <option value="env">🌿 環境組</option>
+        <option value="chat">💬 聊天組</option>
       </select>
     </div>
+    <div class="row">
+      <input id="inp-email" type="email" placeholder="電子郵件（老師回饋通知用）" class="full" />
+    </div>
+    <p class="hint">📧 填寫電子郵件後，老師給予評語時您將收到通知信</p>
     <textarea id="inp-text" placeholder="寫下今天的感受、印象最深的事、對長照的新認識……（最多 500 字）" maxlength="500"></textarea>
     <div class="char-count" id="char-count">0 / 500</div>
+    <div class="success-box" id="success-box">
+      <p>🎉 心得已送出！<br>老師閱讀並給予評語後，將寄送通知至您的信箱。</p>
+    </div>
     <button class="submit-btn" id="submit-btn" onclick="submitPost()">送出心得 🌿</button>
   </div>
 
@@ -232,119 +135,157 @@
       <button class="filter-btn" onclick="setFilter('chat',this)">聊天組</button>
     </div>
   </div>
-
-  <div id="wall"></div>
+  <div id="wall"><div class="loading">載入中…</div></div>
 
 </main>
-
 <div class="toast" id="toast"></div>
 
 <script>
-  const STORAGE_KEY = 'yp_ltc_posts_v1';
-  let currentFilter = 'all';
+/* ============================================================
+   CONFIG — 請填入您的 Firebase 專案設定
+   取得方式：Firebase Console → 專案設定 → 您的應用程式
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey:            "",   // 填入 apiKey
+  authDomain:        "",   // 填入 authDomain
+  projectId:         "",   // 填入 projectId
+  storageBucket:     "",   // 填入 storageBucket
+  messagingSenderId: "",   // 填入 messagingSenderId
+  appId:             ""    // 填入 appId
+};
+/* ============================================================ */
 
-  // ── 字數計算 ──
-  document.getElementById('inp-text').addEventListener('input', function() {
-    const n = this.value.length;
-    const el = document.getElementById('char-count');
-    el.textContent = n + ' / 500';
-    el.className = 'char-count' + (n >= 450 ? ' warn' : '');
-  });
+const IS_CONFIGURED = FIREBASE_CONFIG.apiKey !== "";
+let db = null;
+let allPosts = [];
+let currentFilter = 'all';
 
-  // ── 讀取資料 ──
-  function loadPosts() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-    catch { return []; }
-  }
+// ── 初始化 Firebase ──
+if (IS_CONFIGURED) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+  document.getElementById('setup-banner').classList.add('hidden');
+  listenPosts();
+} else {
+  // 未設定：從 localStorage 讀取（僅本機）
+  loadFromLocal();
+}
 
-  // ── 儲存資料 ──
-  function savePosts(posts) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-  }
+// ── 字數計算 ──
+document.getElementById('inp-text').addEventListener('input', function() {
+  const n = this.value.length;
+  const el = document.getElementById('char-count');
+  el.textContent = n + ' / 500';
+  el.className = 'char-count' + (n >= 450 ? ' warn' : '');
+});
 
-  // ── 送出 ──
-  function submitPost() {
-    const name  = document.getElementById('inp-name').value.trim();
-    const cls   = document.getElementById('inp-class').value.trim();
-    const group = document.getElementById('inp-group').value;
-    const text  = document.getElementById('inp-text').value.trim();
+// ── 送出心得 ──
+async function submitPost() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const cls   = document.getElementById('inp-class').value.trim();
+  const group = document.getElementById('inp-group').value;
+  const email = document.getElementById('inp-email').value.trim();
+  const text  = document.getElementById('inp-text').value.trim();
 
-    if (!name)  { showToast('請填寫姓名或暱稱'); return; }
-    if (!group) { showToast('請選擇服務組別'); return; }
-    if (text.length < 10) { showToast('心得至少 10 個字喔！'); return; }
+  if (!name)              { showToast('請填寫姓名或暱稱'); return; }
+  if (!group)             { showToast('請選擇服務組別'); return; }
+  if (!email)             { showToast('請填寫電子郵件，老師回饋後才能通知您'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('電子郵件格式不正確'); return; }
+  if (text.length < 10)   { showToast('心得至少 10 個字喔！'); return; }
 
-    const post = {
-      id: Date.now(),
-      name, cls, group, text,
-      time: new Date().toLocaleString('zh-TW', { hour12: false })
-    };
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = '送出中…';
 
-    const posts = loadPosts();
-    posts.unshift(post);
-    savePosts(posts);
+  const post = { name, cls, group, email, text,
+    timestamp: IS_CONFIGURED ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+    teacherComment: null, commentedAt: null };
 
-    // 清空
-    document.getElementById('inp-name').value  = '';
-    document.getElementById('inp-class').value = '';
-    document.getElementById('inp-group').value = '';
-    document.getElementById('inp-text').value  = '';
-    document.getElementById('char-count').textContent = '0 / 500';
-
-    renderWall();
-    showToast('心得已送出，謝謝你！🎉');
-  }
-
-  // ── 篩選 ──
-  function setFilter(f, btn) {
-    currentFilter = f;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderWall();
-  }
-
-  // ── 渲染心得牆 ──
-  function renderWall() {
-    const all   = loadPosts();
-    const shown = currentFilter === 'all' ? all : all.filter(p => p.group === currentFilter);
-    const wall  = document.getElementById('wall');
-
-    document.getElementById('total-count').textContent = all.length + ' 則';
-
-    if (shown.length === 0) {
-      wall.innerHTML = `<div class="empty-state"><span>🌱</span>還沒有心得，成為第一位分享的同學吧！</div>`;
-      return;
+  try {
+    if (IS_CONFIGURED) {
+      await db.collection('posts').add(post);
+    } else {
+      const posts = JSON.parse(localStorage.getItem('yp_ltc_posts_v1') || '[]');
+      post.id = Date.now(); post.timestamp = new Date().toLocaleString('zh-TW',{hour12:false});
+      posts.unshift(post);
+      localStorage.setItem('yp_ltc_posts_v1', JSON.stringify(posts));
+      loadFromLocal();
     }
-
-    wall.innerHTML = shown.map(p => `
-      <div class="card">
-        <div class="card-top">
-          <div>
-            <div class="card-name">${escHtml(p.name)}${p.cls ? ' ‧ ' + escHtml(p.cls) : ''}</div>
-          </div>
-          <div class="card-meta">${escHtml(p.time)}</div>
-        </div>
-        <span class="group-tag ${p.group === 'env' ? 'tag-env' : 'tag-chat'}">
-          ${p.group === 'env' ? '🌿 環境組' : '💬 聊天組'}
-        </span>
-        <div class="card-body">${escHtml(p.text)}</div>
-      </div>
-    `).join('');
+    // 清空
+    ['inp-name','inp-class','inp-email','inp-text'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('inp-group').value = '';
+    document.getElementById('char-count').textContent = '0 / 500';
+    document.getElementById('success-box').classList.add('show');
+    showToast('心得已送出！🎉');
+  } catch(e) {
+    showToast('送出失敗，請稍後再試');
+    console.error(e);
   }
 
-  // ── 工具 ──
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  btn.disabled = false;
+  btn.textContent = '送出心得 🌿';
+}
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
-  }
+// ── Firebase 即時監聽 ──
+function listenPosts() {
+  db.collection('posts').orderBy('timestamp','desc').onSnapshot(snap => {
+    allPosts = snap.docs.map(d => ({ id: d.id, ...d.data(),
+      time: d.data().timestamp?.toDate?.()?.toLocaleString('zh-TW',{hour12:false}) || '—' }));
+    renderWall();
+  });
+}
 
-  // 初始化
+// ── localStorage fallback ──
+function loadFromLocal() {
+  allPosts = JSON.parse(localStorage.getItem('yp_ltc_posts_v1') || '[]');
   renderWall();
+}
+
+// ── 篩選 ──
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWall();
+}
+
+// ── 渲染心得牆 ──
+function renderWall() {
+  const shown = currentFilter === 'all' ? allPosts : allPosts.filter(p => p.group === currentFilter);
+  const wall  = document.getElementById('wall');
+  document.getElementById('total-count').textContent = allPosts.length + ' 則';
+
+  if (shown.length === 0) {
+    wall.innerHTML = `<div class="empty-state"><span>🌱</span>還沒有心得，成為第一位分享的同學吧！</div>`;
+    return;
+  }
+
+  wall.innerHTML = shown.map(p => `
+    <div class="card">
+      <div class="card-top">
+        <div class="card-name">${esc(p.name)}${p.cls ? ' ‧ ' + esc(p.cls) : ''}</div>
+        <div class="card-meta">${esc(p.time||'')}</div>
+      </div>
+      <span class="group-tag ${p.group==='env'?'tag-env':'tag-chat'}">
+        ${p.group==='env'?'🌿 環境組':'💬 聊天組'}
+      </span>
+      <div class="card-body">${esc(p.text)}</div>
+      ${p.teacherComment ? `
+        <div class="teacher-comment">
+          <strong>👩‍🏫 老師評語</strong>
+          ${esc(p.teacherComment)}
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
 </script>
 </body>
 </html>
